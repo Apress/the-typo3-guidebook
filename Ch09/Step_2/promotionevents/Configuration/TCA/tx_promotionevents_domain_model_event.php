@@ -92,12 +92,12 @@ return [
     'types' => [
         1 => [
             'showitem' => '
-                title,
-                promotiondate,
-                promotiontime,
-                location,
-                locationlink,
-                description,
+               title,
+               promotiondate,
+               promotiontime,
+               location,
+               locationlink,
+               description,
            '
         ]
     ]

@@ -1,9 +1,0 @@
-<h2>Upcoming Events</h2>
-<ul>
-	<f:for each="{upcomingEvents}" as="event">
-		<li>
-			{event.title} at {event.location} on <f:format.date format="d.m.Y">{event.promotiondate}</f:format.date><br>
-			<f:link.action action="detail" arguments="{event: event}">More details</f:link.action>
-		</li>
-	</f:for>
-</ul>

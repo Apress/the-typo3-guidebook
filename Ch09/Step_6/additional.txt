@@ -1,0 +1,9 @@
+Add the following code to your root composer.json file
+
+"autoload": {
+    "psr-4": {
+        "PromotionTourWebsite\\PromotionEvents\\": "public/typo3conf/ext/promotionevents/Classes"
+    }
+},
+
+And then run `composer dumpautoload` inside the command line on the same location where your root composer.json file is located.
