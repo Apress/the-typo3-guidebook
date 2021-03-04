@@ -1,0 +1,199 @@
+## Code Snippets from Chapter 6
+## Guide 2: Creating Your First TYPO3 Site
+
+## Step 1: Creating your page tree
+// Command for creating a ddev project
+ddev config --project-type typo3 --project-name promotiontour --docroot public --create-docroot
+
+## Step 3: Adding a TypoScript template
+
+// Link TypoScript (setup) to file in site extension
+@import 'EXT:site_promotiontour/Configuration/TypoScript/setup.typoscript'
+
+// Link TypoScript (constants) to file in your site extension
+@import 'EXT:site_promotiontour/Configuration/TypoScript/constants.typoscript'
+
+
+## Step 4: Creating a site extension
+
+// File: site_promotiontour/ext_emconf.php
+
+<?php
+$EM_CONF[$_EXTKEY] = [
+    'title' => 'Promotion Tour Site Extension',
+    'description' => 'All templates and assets for the website promotion tour',
+    'category' => 'fe',
+    'author' => 'A new TYPO3 star',
+    'author_email' => 'nobody@acme.com',
+    'state' => 'stable',
+    'clearCacheOnLoad' => 1,
+    'version' => '1.0.0',
+    'constraints' => [
+        'depends' =>
+            [
+                'typo3' => '10.4.0-10.4.99',
+                'fluid_styled_content' => '10.4.0-10.4.99'
+            ],
+        'conflicts' => [],
+        'suggests' => [],
+    ],
+];
+
+
+// File: site_promotiontour/Configuration/TypoScript/setup.typoscript
+
+page = PAGE
+page.10 = TEXT
+page.10.value = Hello new world
+
+
+## Step 5: Including an HTML theme
+
+// File: site_promotiontour/Configuration/TypoScript/setup.typoscript
+
+page = PAGE
+page {
+    meta.viewport = width=device-width, initial-scale=1, user-scalable=no
+    includeCSS.theme = EXT:site_promotiontour/Resources/Public/External/assets/css/main.css
+    bodyTag = <body class="is-preload">
+    includeJSFooter {
+        theme-file1 = EXT:site_promotiontour/Resources/Public/External/assets/js/jquery.min.js
+        theme-file2 = EXT:site_promotiontour/Resources/Public/External/assets/js/browser.min.js
+        theme-file3 = EXT:site_promotiontour/Resources/Public/External/assets/js/breakpoints.min.js
+        theme-file4 = EXT:site_promotiontour/Resources/Public/External/assets/js/util.js
+        theme-file5 = EXT:site_promotiontour/Resources/Public/External/assets/js/main.js
+    }
+
+    10 = FLUIDTEMPLATE
+    10.templateRootPaths.10 = {$page.templates.templateRootPath}
+    10.partialsRootPaths.10 = {$page.templates.partialRootPath}
+    10.layoutRootPaths.10 = {$page.templates.layoutRootPath}
+    10.templateName = Default
+    10.dataProcessing {
+        1 = TYPO3\CMS\Frontend\DataProcessing\SiteProcessor
+        1.as = site
+        10 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
+        10 {
+            levels = 1
+            as = headerMenu
+        }
+    }
+}
+
+
+// File: site_promotiontour/Configuration/TypoScript/constants.typoscript
+
+page.templates {
+    layoutRootPath = EXT:site_promotiontour/Resources/Private/Layouts/Page/
+    partialRootPath = EXT:site_promotiontour/Resources/Private/Partials/Page/
+    templateRootPath = EXT:site_promotiontour/Resources/Private/Templates/Page/
+}
+# content
+styles.templates {
+    layoutRootPath = EXT:site_promotiontour/Resources/Private/Layouts/ContentElements/
+    partialRootPath = EXT:site_promotiontour/Resources/Private/Partials/ContentElements/
+    templateRootPath = EXT:site_promotiontour/Resources/Private/Templates/ContentElements/
+}
+
+
+## Step 6: Replacing the theme content with dynamic parts
+
+// File: site_promotiontour/Resources/Private/Templates/Page/Default.html
+
+    <header id="header">
+        <h1><f:link.page pageUid="1">{site.configuration.websiteTitle}</f:link.page></h1>
+        <nav class="links">
+            <ul>
+                <f:for each="{headerMenu}" as="menuItem">
+                    <li class="{f:if(condition: menuItem.active, then:'active')}">
+                        <a href="{menuItem.link}" target="{menuItem.target}" title="{menuItem.title}">{menuItem.title}</a>
+                    </li>
+                </f:for>
+            </ul>
+        </nav>
+        <nav class="main">
+            <ul>
+                <li class="menu">
+                    <a class="fa-bars" href="#menu">Menu</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+
+// File: site_promotiontour/Resources/Private/Templates/Page/Default.html
+
+    <!-- Links -->
+    <section>
+        <ul class="links">
+            <f:for each="{popoverMenu}" as="menuItem">
+                <li class="{f:if(condition: menuItem.active, then:'active')}">
+                    <a href="{menuItem.link}" target="{menuItem.target}" title="{menuItem.title}">
+                        <h3>{menuItem.title}</h3>
+                        <p>{menuItem.subtitle}</p>
+                    </a>
+                </li>
+            </f:for>
+        </ul>
+    </section>
+
+
+// File: site_promotiontour/Configuration/TypoScript/setup.typoscript
+
+10.dataProcessing {
+    1 = TYPO3\CMS\Frontend\DataProcessing\SiteProcessor
+    1.as = site
+    10 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
+    10 {
+        levels = 1
+        as = headerMenu
+    }
+    20 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
+    20 {
+        special = directory
+        # Replace 5 below with the page ID
+        special.value = 5
+        as = popoverMenu
+    }
+}
+
+
+## Step 7: Creating content
+
+// File: site_promotiontour/Resources/Private/Templates/Page/Default.html
+
+    <!-- Main -->
+    <div id="main">
+
+        <f:cObject typoscriptObjectPath="styles.content.get" />
+
+
+// File: site_promotiontour/Configuration/TypoScript/constants.typoscript
+
+@import 'EXT:fluid_styled_content/Configuration/TypoScript/constants.typoscript'
+
+
+// File: site_promotiontour/Configuration/TypoScript/setup.typoscript
+
+@import 'EXT:fluid_styled_content/Configuration/TypoScript/setup.typoscript'
+
+
+## Step 8: Styling the content
+
+// File: site_promotiontour/Resources/Private/Layouts/ContentElements/Default.html
+
+<article class="post">
+   <f:if condition="{data.header}">
+       <header>
+       <div class="title">
+           <h2>{data.header}</h2>
+       </div>
+       </header>
+   </f:if>
+   <f:render section="Main" optional="true" />
+   <footer>
+       <f:render section="Footer" optional="true">
+           <f:render partial="Footer/All" arguments="{_all}" />
+       </f:render>
+   </footer>
+</article>
