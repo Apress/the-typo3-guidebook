@@ -1,5 +1,5 @@
-// Link TypoScript (setup) to file in our site extension
+// Link TypoScript (setup) to file in your site extension
 @import 'EXT:site_promotiontour/Configuration/TypoScript/setup.typoscript'
 
-// Link TypoScript (constants) to file in our site extension
+// Link TypoScript (constants) to file in your site extension
 @import 'EXT:site_promotiontour/Configuration/TypoScript/constants.typoscript'

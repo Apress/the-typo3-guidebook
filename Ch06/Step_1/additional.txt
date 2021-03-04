@@ -1,2 +1,2 @@
-//
+// Command for creating a ddev project
 ddev config --project-type typo3 --project-name promotiontour --docroot public --create-docroot
