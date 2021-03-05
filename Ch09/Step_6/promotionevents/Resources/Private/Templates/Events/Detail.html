@@ -1,11 +1,11 @@
 <h2>{event.title}</h2>
 <p>
-	Location: {event.location}<br>
-	<f:if condition="{event.locationlink}">
-		<f:link.typolink parameter="{event.locationlink}">Location details</f:link.typolink>
-	</f:if>
+    Location: {event.location}<br>
+    <f:if condition="{event.locationlink}">
+        <f:link.typolink parameter="{event.locationlink}">Location details</f:link.typolink>
+    </f:if>
 </p>
 <p>
-	<f:format.date format="d.m.Y">{event.promotiondate}</f:format.date> – starts at <f:format.date format="H:i">{event.promotiontime}</f:format.date>
+    <f:format.date format="d.m.Y">{event.promotiondate}</f:format.date> – starts at <f:format.date format="H:i">{event.promotiontime}</f:format.date>
 </p>
 <f:format.html>{event.description}</f:format.html>
