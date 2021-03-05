@@ -2,36 +2,36 @@
 
 page = PAGE
 page {
-  meta.viewport = width=device-width, initial-scale=1, user-scalable=no
-  includeCSS.theme = EXT:site_promotiontour/Resources/Public/External/assets/css/main.css
-  bodyTag = <body class="is-preload">
-  includeJSFooter {
-    theme-file1 = EXT:site_promotiontour/Resources/Public/External/assets/js/jquery.min.js
-    theme-file2 = EXT:site_promotiontour/Resources/Public/External/assets/js/browser.min.js
-    theme-file3 = EXT:site_promotiontour/Resources/Public/External/assets/js/breakpoints.min.js
-    theme-file4 = EXT:site_promotiontour/Resources/Public/External/assets/js/util.js
-    theme-file5 = EXT:site_promotiontour/Resources/Public/External/assets/js/main.js
-  }
+    meta.viewport = width=device-width, initial-scale=1, user-scalable=no
+    includeCSS.theme = EXT:site_promotiontour/Resources/Public/External/assets/css/main.css
+    bodyTag = <body class="is-preload">
+    includeJSFooter {
+        theme-file1 = EXT:site_promotiontour/Resources/Public/External/assets/js/jquery.min.js
+        theme-file2 = EXT:site_promotiontour/Resources/Public/External/assets/js/browser.min.js
+        theme-file3 = EXT:site_promotiontour/Resources/Public/External/assets/js/breakpoints.min.js
+        theme-file4 = EXT:site_promotiontour/Resources/Public/External/assets/js/util.js
+        theme-file5 = EXT:site_promotiontour/Resources/Public/External/assets/js/main.js
+    }
 
-  10 = FLUIDTEMPLATE
-  10.templateRootPaths.10 = {$page.templates.templateRootPath}
-  10.partialsRootPaths.10 = {$page.templates.partialRootPath}
-  10.layoutRootPaths.10 = {$page.templates.layoutRootPath}
-  10.templateName = Default
-  10.dataProcessing {
-    1 = TYPO3\CMS\Frontend\DataProcessing\SiteProcessor
-    1.as = site
-    10 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
-    10 {
-      levels = 1
-      as = headerMenu
+    10 = FLUIDTEMPLATE
+    10.templateRootPaths.10 = {$page.templates.templateRootPath}
+    10.partialsRootPaths.10 = {$page.templates.partialRootPath}
+    10.layoutRootPaths.10 = {$page.templates.layoutRootPath}
+    10.templateName = Default
+    10.dataProcessing {
+        1 = TYPO3\CMS\Frontend\DataProcessing\SiteProcessor
+        1.as = site
+        10 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
+        10 {
+            levels = 1
+            as = headerMenu
+        }
+        20 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
+        20 {
+            special = directory
+             # Replace 5 below with the page ID
+            special.value = 5
+            as = popoverMenu
+        }
     }
-    20 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
-    20 {
-      special = directory
-       # Replace 5 below with the page ID
-      special.value = 5
-      as = popoverMenu
-    }
-  }
 }
