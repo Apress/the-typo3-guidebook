@@ -1,6 +1,0 @@
-10 = TEXT
-10 {
-  field = title
-  wrap = <p>|</p>
-  debugData = 1
-}
