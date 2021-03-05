@@ -1,0 +1,65 @@
+## Code Snippets from Chapter 11
+## Guide 7: Translating Your Site
+
+## Step 4: Adding a language to your template
+
+// File: site_promotiontour/Configuration/TypoScript/setup.typoscript
+
+page = PAGE
+page {
+    ...
+    10 = FLUIDTEMPLATE
+    10.templateRootPaths.10 = {$page.templates.templateRootPath}
+    10.partialsRootPaths.10 = {$page.templates.partialRootPath}
+    10.layoutRootPaths.10 = {$page.templates.layoutRootPath}
+    10.templateName = Default
+    10.dataProcessing {
+        1 = TYPO3\CMS\Frontend\DataProcessing\SiteProcessor
+        1.as = site
+        10 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
+        10 {
+            levels = 1
+            as = headerMenu
+        }
+        20 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
+        20 {
+            special = directory
+            special.value = 5
+            as = popoverMenu
+        }
+        30 = TYPO3\CMS\Frontend\DataProcessing\LanguageMenuProcessor
+        30.as = languageMenu
+    }
+}
+
+// File: site_promotiontour/Resources/Private/Templates/Page/Default.html
+
+<section id="menu">
+    ...
+
+    <!-- Links -->
+    <section>
+        <ul class="links">
+            <f:for each="{popoverMenu}" as="menuItem">
+                <li class="{f:if(condition: menuItem.active, then:'active')}">
+                    <a href="{menuItem.link}" target="{menuItem.target}" title="{menuItem.title}">
+                        <h3>{menuItem.title}</h3>
+                        <p>{menuItem.description}</p>
+                    </a>
+                </li>
+            </f:for>
+        </ul>
+    </section>
+
+    <!-- Actions -->
+    <section>
+        <ul class="actions stacked">
+            <f:for each="{languageMenu}" as="menuItem">
+                <f:if condition="{menuItem.active} == 0">
+                    <li><a href="{menuItem.link}" class="button large fit">Switch to {menuItem.navigationTitle}</a></li>
+                </f:if>
+            </f:for>
+        </ul>
+    </section>
+
+</section>
