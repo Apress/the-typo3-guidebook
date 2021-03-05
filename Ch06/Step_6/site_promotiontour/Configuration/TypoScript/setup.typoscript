@@ -13,7 +13,7 @@ page {
 
     10 = FLUIDTEMPLATE
     10.templateRootPaths.10 = {$page.templates.templateRootPath}
-    10.partialsRootPaths.10 = {$page.templates.partialRootPath}
+    10.partialRootPaths.10 = {$page.templates.partialRootPath}
     10.layoutRootPaths.10 = {$page.templates.layoutRootPath}
     10.templateName = Default
     10.dataProcessing {
