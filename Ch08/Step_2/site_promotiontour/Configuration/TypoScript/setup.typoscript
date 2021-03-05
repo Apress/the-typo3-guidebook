@@ -29,7 +29,7 @@ page {
         20 = TYPO3\CMS\Frontend\DataProcessing\MenuProcessor
         20 {
             special = directory
-             # Replace 5 below with the page ID
+            # Replace 5 below with the page ID
             special.value = 5
             as = popoverMenu
         }
