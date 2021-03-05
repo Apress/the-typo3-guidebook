@@ -1,0 +1,108 @@
+## Code Snippets from Chapter 8
+## Guide 4: Planning, Building, and Using Content Elements
+
+## Step 2: Create new content type
+
+// File: site_promotiontour/Configuration/TCA/Overrides/bookquote.php
+
+<?php
+call_user_func(static function () {
+    // Adds another option to the dropdown representing the field "CType" of the tt_content table.
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTcaSelectItem(
+        'tt_content',
+        'CType',
+        // The first entry is the menu item label, the second is the value stored in the database.
+        ['What other people are saying?', 'bookquote'],
+        // This content type will show up after the "HTML" content type in the dropdown menu.
+        'html',
+        'after'
+    );
+
+    // The following defines which fields should be visible, and in which order.
+    $GLOBALS['TCA']['tt_content']['types']['bookquote'] = [
+        'showitem' => '
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
+                --palette--;;general,
+                bodytext;Quote,
+                header;Author,
+                assets;Image of the author,
+            --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.appearance,
+                --palette--;;frames,
+                --palette--;;appearanceLinks,
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language,
+                --palette--;;language,
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
+                --palette--;;hidden,
+                --palette--;;access,
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:categories,
+                categories,
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
+                rowDescription,
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:extended,
+        ',
+        'columnsOverrides' => [
+            'bodytext' => [
+                'config' => [
+                    'rows' => 3
+                ]
+            ]
+        ]
+    ];
+});
+
+
+// File: site_promotiontour/ext_localconf.php
+
+<?php
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
+    mod.wizards.newContentElement.wizardItems {
+        common.elements.bookquote {
+            title = Book Quote
+            description = What other people are saying
+            tt_content_defValues.CType = bookquote
+            iconIdentifier = content-text
+        }
+        common.show := addToList(bookquote)
+    }
+');
+
+## Step 4: Rendering the content element
+
+// File: site_promotiontour/Configuration/TypoScript/setup.typoscript
+
+tt_content.bookquote =< lib.contentElement
+tt_content.bookquote {
+    templateName = Bookquote
+    dataProcessing {
+        10 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
+        10 {
+            references.fieldName = assets
+            as = assets
+        }
+    }
+}
+
+
+// File: site_promotiontour/Resources/Private/Templates/ContentElements/Bookquote.html
+
+<article class="post">
+    <f:if condition="{data.header}">
+        <header>
+            <div class="title">
+                <h2>{data.header}</h2>
+            </div>
+        </header>
+    </f:if>
+    <div class="row">
+        <div class="col-9">
+            <p>This is what {data.header} said about our book:</p>
+            <blockquote>{data.bodytext}</blockquote>
+        </div>
+        <div class="col-3">
+            <div class="image">
+                <f:image image="{assets.0}" maxHeight="200" />
+            </div>
+        </div>
+    </div>
+</article>
