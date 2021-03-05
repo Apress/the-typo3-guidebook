@@ -1,6 +1,8 @@
 ## Code Snippets from Chapter 9
 ## Guide 5: Creating your first standalone extension
 
+## Step 1: Create the extension structure
+
 // File: promotionevents/ext_emconf.php
 
 <?php
