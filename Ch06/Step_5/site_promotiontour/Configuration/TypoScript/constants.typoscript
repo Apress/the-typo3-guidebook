@@ -1,0 +1,12 @@
+# page
+page.templates {
+    layoutRootPath = EXT:site_promotiontour/Resources/Private/Layouts/Page/
+    partialRootPath = EXT:site_promotiontour/Resources/Private/Partials/Page/
+    templateRootPath = EXT:site_promotiontour/Resources/Private/Templates/Page/
+}
+# content
+styles.templates {
+    layoutRootPath = EXT:site_promotiontour/Resources/Private/Layouts/ContentElements/
+    partialRootPath = EXT:site_promotiontour/Resources/Private/Partials/ContentElements/
+    templateRootPath = EXT:site_promotiontour/Resources/Private/Templates/ContentElements/
+}
