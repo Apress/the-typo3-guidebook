@@ -1,0 +1,440 @@
+## Code Snippets from Chapter 9
+## Guide 5: Creating your first standalone extension
+
+## Step 1: Create the extension structure
+
+// File: promotionevents/ext_emconf.php
+
+<?php
+
+$EM_CONF[$_EXTKEY] = [
+   'title' => 'Promotion Tour: Upcoming Events',
+   'description' => 'Manage upcoming events and display them on your website',
+   'category' => 'fe',
+   'author' => 'A new TYPO3 star',
+   'author_email' => 'nobody@acme.com',
+   'state' => 'alpha',
+   'clearCacheOnLoad' => 1,
+   'version' => '1.0.0',
+   'constraints' => [
+       'depends' =>
+           [
+               'typo3' => '10.4.0-10.4.99'
+           ],
+       'conflicts' => [],
+       'suggests' => [],
+   ],
+];
+
+
+## Step 2: Add a custom data structure
+
+// File: promotionevents/ext_tables.sql
+
+CREATE TABLE tx_promotionevents_domain_model_event (
+  title varchar(200) DEFAULT '',
+  description text DEFAULT '' NOT NULL,
+  promotiondate DATE,
+  promotiontime TIME,
+  location varchar(200) DEFAULT '',
+  locationlink varchar(1024) DEFAULT ''
+);
+
+
+// File: promotionevents/Configuration/TCA/tx_promotionevents_domain_model_event.php
+
+<?php
+
+return [
+   'ctrl' => [
+       # A text for TYPO3 listings
+       'title' => 'Promotion Tour Events',
+       # The main label for TYPO3 listings, plus alternative fields which should be shown along
+       'label' => 'promotiondate',
+       'label_alt' => 'headline,promotiontime',
+       'label_alt_force' => true,
+       # order records in TYPO3's Backend by the date
+       'default_sortby' => 'promotiondate DESC',
+       # an icon for the records in TYPO3 Backend, custom icons can be registered as well
+       'typeicon_classes' => [
+           'default' => 'mimetypes-x-sys_note'
+       ],
+       # TYPO3 will automatically create control-fields in the database here
+       'tstamp' => 'updatedon',
+       'crdate' => 'createdon',
+       'cruser_id' => 'createdby',
+       'enablecolumns' => [
+           'disabled' => 'hidden'
+       ]
+   ],
+   # definition of each field from ext_tables.sql
+   'columns' => [
+       'title' => [
+           'label' => 'Title',
+           'config' => [
+               'type' => 'input',
+               'size' => 50,
+               'max' => 200,
+               'eval' => 'required'
+           ],
+       ],
+       'description' => [
+           'label' => 'Additional information',
+           'config' => [
+               'type' => 'text',
+               'renderType' => '',
+               'cols' => 80,
+               'rows' => 15,
+               'enableRichtext' => true,
+           ]
+       ],
+       'promotiondate' => [
+           'label' => 'Date of the Event',
+           'config' => [
+               'type' => 'input',
+               'renderType' => 'inputDateTime',
+               'eval' => 'date,required',
+               'dbType' => 'date',
+           ]
+       ],
+       'promotiontime' => [
+           'label' => 'Start time of the Event',
+           'config' => [
+               'type' => 'input',
+               'renderType' => 'inputDateTime',
+               'eval' => 'time,required',
+               'dbType' => 'time',
+           ]
+       ],
+       'location' => [
+           'label' => 'Location',
+           'config' => [
+               'type' => 'input',
+               'size' => 50,
+               'max' => 200,
+               'eval' => 'required'
+           ],
+       ],
+       'locationlink' => [
+           'label' => 'Optional Link to the location',
+           'config' => [
+               'type' => 'input',
+               'renderType' => 'inputLink',
+               'size' => 50,
+               'max' => 1024,
+               'fieldControl' => [
+                   'linkPopup' => [
+                       'options' => [
+                           'title' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:header_link_formlabel',
+                       ],
+                   ],
+               ],
+               'softref' => 'typolink'
+           ]
+       ],
+   ],
+   # define the order on how the fields should be shown in TYPO3s Backend Editing view
+   'types' => [
+       1 => [
+           'showitem' => '
+               title,
+               promotiondate,
+               promotiontime,
+               location,
+               locationlink,
+               description,
+           '
+       ]
+   ]
+];
+
+
+## Step 4: Create the plugin
+
+// File: promotionevents/Configuration/TCA/Overrides/plugins.php
+
+<?php
+defined('TYPO3_MODE') or die();
+
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
+    'promotionevents', // Extension Name
+    'Upcoming', // Plugin identifier
+    'Upcoming Promotion Events', // Label
+    'EXT:promotionevents/Resources/Public/Icons/Extension.png' // Icon
+);
+
+
+// File: promotionevents/ext_localconf.php
+
+<?php
+defined('TYPO3_MODE') or die();
+
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
+    'promotionevents',  // Extension Name
+    'Upcoming', // Plugin identifier
+    [
+        // A group of all controllers and actions for this plugin
+        \PromotionTourWebsite\PromotionEvents\Controller\EventsController::class => 'upcoming,detail'
+    ],
+    [
+        // No uncacheable plugin actions
+    ]
+);
+
+
+// File: promotionevents/Classes/Controller/EventsController.php
+
+<?php
+
+namespace PromotionTourWebsite\PromotionEvents\Controller;
+
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+
+class EventsController extends ActionController
+{
+    public function upcomingAction()
+    {
+
+    }
+}
+
+
+// File (root project directory): composer.json
+
+"autoload": {
+    "psr-4": {
+        "PromotionTourWebsite\\PromotionEvents\\": "public/typo3conf/ext/promotionevents/Classes"
+    }
+},
+
+
+// File: promotionevents/Resources/Private/Templates/Events/Upcoming.html
+
+<h2>Upcoming Events</h2>
+<ul>
+    <li>Event a</li>
+    <li>Event b</li>
+    <li>Event c</li>
+</ul>
+
+
+## Step 5: Fetch content from the database
+
+// File: promotionevents/Classes/Domain/Repository/EventRepository.php
+
+<?php
+
+namespace PromotionTourWebsite\PromotionEvents\Domain\Repository;
+
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Persistence\Repository;
+
+class EventRepository extends Repository
+{
+    public function findUpcoming()
+    {
+        $query = $this->createQuery();
+        $query->greaterThan(
+            'promotiondate',
+            new \DateTime()
+        );
+        // Show the next three events
+        $query->setLimit(3);
+        $query->setOrderings(['promotiondate' => QueryInterface::ORDER_ASCENDING]);
+        return $query->execute();
+    }
+}
+
+
+// File: promotionevents/Classes/Domain/Model/Event.php
+
+<?php
+
+namespace PromotionTourWebsite\PromotionEvents\Domain\Model;
+
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+
+class Event extends AbstractEntity
+{
+    /**
+    * @var string
+    */
+    protected $title;
+
+    /**
+    * @var string
+    */
+    protected $description;
+
+    /**
+    * @var \DateTime
+    */
+    protected $promotiondate;
+
+    /**
+    * @var \DateTime
+    */
+    protected $promotiontime;
+
+    /**
+    * @var string
+    */
+    protected $location;
+
+    /**
+    * @var string
+    */
+    protected $locationlink;
+
+    /**
+    * @return string
+    */
+    public function getTitle(): string
+    {
+       return $this->title;
+    }
+
+    /**
+    * @return string
+    */
+    public function getDescription(): string
+    {
+       return $this->description;
+    }
+
+    /**
+    * @return \DateTime
+    */
+    public function getPromotiondate(): \DateTime
+    {
+       return $this->promotiondate;
+    }
+
+    /**
+    * @return \DateTime
+    */
+    public function getPromotiontime(): \DateTime
+    {
+       return $this->promotiontime;
+    }
+
+    /**
+    * @return string
+    */
+    public function getLocation(): string
+    {
+       return $this->location;
+    }
+
+    /**
+    * @return string
+    */
+    public function getLocationlink(): string
+    {
+       return $this->locationlink;
+    }
+}
+
+
+// File: promotionevents/Classes/Controller/EventsController.php
+
+<?php
+
+namespace PromotionTourWebsite\PromotionEvents\Controller;
+
+use PromotionTourWebsite\PromotionEvents\Domain\Repository\EventRepository;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+
+class EventsController extends ActionController
+{
+    /**
+    * @var EventRepository
+    */
+    protected $eventRepository;
+
+    public function __construct(EventRepository $eventRepository)
+    {
+        $this->eventRepository = $eventRepository;
+    }
+
+    public function upcomingAction()
+    {
+        $upcomingEvents = $this->eventRepository->findUpcoming();
+        $this->view->assign('upcomingEvents', $upcomingEvents);
+    }
+}
+
+
+// File: promotionevents/Resources/Private/Templates/Events/Upcoming.html
+
+<h2>Upcoming Events</h2>
+<ul>
+<f:for each="{upcomingEvents}" as="event">
+    <li>{event.title} at {event.location} on <f:format.date format="d.m.Y">{event.promotiondate}</f:format.date></li>
+</f:for>
+</ul>
+
+
+## Step 6: Create a detail view for an event
+
+// File: promotionevents/Classes/Controller/EventsController.php
+
+<?php
+
+namespace PromotionTourWebsite\PromotionEvents\Controller;
+
+use PromotionTourWebsite\PromotionEvents\Domain\Model\Event;
+use PromotionTourWebsite\PromotionEvents\Domain\Repository\EventRepository;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+
+class EventsController extends ActionController
+{
+    /**
+     * @var EventRepository
+     */
+    protected $eventRepository;
+
+    public function __construct(EventRepository $eventRepository)
+    {
+        $this->eventRepository = $eventRepository;
+    }
+
+    public function upcomingAction()
+    {
+        $upcomingEvents = $this->eventRepository->findUpcoming();
+        $this->view->assign('upcomingEvents', $upcomingEvents);
+    }
+
+    public function detailAction(Event $event)
+    {
+        $this->view->assign('event', $event);
+    }
+}
+
+
+// File: promotionevents/Resources/Private/Templates/Events/Detail.html
+
+<h2>{event.title}</h2>
+<p>
+    Location: {event.location}<br>
+    <f:if condition="{event.locationlink}">
+        <f:link.typolink parameter="{event.locationlink}">Location details</f:link.typolink>
+    </f:if>
+</p>
+<p>
+    <f:format.date format="d.m.Y">{event.promotiondate}</f:format.date> – starts at <f:format.date format="H:i">{event.promotiontime}</f:format.date>
+</p>
+<f:format.html>{event.description}</f:format.html>
+
+
+// File: promotionevents/Resources/Private/Templates/Events/Upcoming.html
+
+<h2>Upcoming Events</h2>
+<ul>
+<f:for each="{upcomingEvents}" as="event">
+    <li>
+        {event.title} at {event.location} on <f:format.date format="d.m.Y">{event.promotiondate}</f:format.date><br>
+        <f:link.action action="detail" arguments="{event: event}">More details</f:link.action>
+    </li>
+</f:for>
+</ul>

@@ -1,0 +1,12 @@
+testPage = PAGE
+testPage {
+    typeNum = 999
+
+    10 = TEXT
+    10 {
+        data = date : d-m-y
+        wrap = <p>|</p>
+    }
+
+    20 < lib.typo3Book
+}

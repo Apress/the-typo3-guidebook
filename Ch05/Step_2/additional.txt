@@ -1,0 +1,5 @@
+// Command for creating a ddev project
+ddev config --project-type typo3 --project-name demo --docroot public --create-docroot
+
+// Command for requiring the TYPO3 base distribution
+ddev composer create typo3/cms-base-distribution

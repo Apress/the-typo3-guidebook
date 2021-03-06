@@ -1,0 +1,2 @@
+// Command for requiring the TYPO3 introduction package
+ddev composer require typo3/cms-introduction

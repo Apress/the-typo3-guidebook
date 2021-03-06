@@ -1,0 +1,60 @@
+## Code Snippets from Chapter 14
+## Guide 10: Debugging and Troubleshooting TYPO3
+
+## Step 1: Setting the application context to "Development"
+
+// File: .ddev/docker-compose.typo3.yaml
+
+version: '3.6'
+services:
+  web:
+    environment:
+      - TYPO3_CONTEXT=Development
+
+
+// In commandline
+ddev restart
+
+
+## Step 4: Debugging and troubleshooting Fluid
+
+// File: public/typo3/sysext/fluid_styled_content/Resources/Private/Templates/Text.html
+
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:layout name="Default" />
+<f:section name="Main">
+    <f:debug>{data}</f:debug>
+    <f:format.html>{data.bodytext}</f:format.html>
+
+</f:section>
+</html>
+
+
+## Step 5: Debugging and troubleshooting TypoScript
+
+## Method 2: Isolate the TypoScript
+
+// TYPO3 Backend -> Web -> Template -> Info/Modify -> Setup
+
+testPage = PAGE
+testPage {
+    typeNum = 999
+
+    10 = TEXT
+    10 {
+        data = date : d-m-y
+        wrap = <p>|</p>
+    }
+
+    20 < lib.typo3Book
+}
+
+
+## Method 3: Use the stdWrap function
+
+10 = TEXT
+10 {
+    field = title
+    wrap = <p>|</p>
+    debugData = 1
+}
